@@ -1,0 +1,153 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+
+
+<nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>            
+            <li class="breadcrumb-item"><a href="{% url 'book:book-list' %}">Shop</a></li>            
+            <li class="breadcrumb-item active" aria-current="page">{{title}}</li>
+        </ol>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-xl-4-5col">
+                <div class="category-banners-slider owl-carousel owl-simple owl-nav-inside" data-toggle="owl" 
+                    data-owl-options='{
+                        "nav": false,
+                        "responsive": {
+                            "768": {
+                                "nav": true
+                            }
+                        }
+                    }'>
+                    <div class="banner banner-poster">
+                        
+                        <a href="{% url 'book:book-list' %}">
+                            <img src="{% static 'assets/images/demos/demo-13/banners/banner-7.jpg' %}"  alt="Banner">
+                        </a>
+
+                        <div class="banner-content banner-content-right">
+                            <h3 class="banner-subtitle"><a href="{% url 'book:book-list' %}">Find yourself</a></h3>
+                            <h2 class="banner-title"><a href="{% url 'book:book-list' %}">In the world of books</a></h2>
+                            <a href="{% url 'book:book-list' %}" class="banner-link">Shop Now <i class="icon-long-arrow-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="banner banner-poster">
+                        <a href="{% url 'book:book-list' %}">
+                            <img src=" {% static 'assets/images/demos/demo-13/banners/banner-8.jpg' %}"  alt="Banner">
+                        </a>
+
+                        <div class="banner-content">
+                            <h3 class="banner-subtitle"><a href="{% url 'book:book-list' %}">Weekend Deal</a></h3>
+                            <h2 class="banner-title"><a href="{% url 'book:book-list' %}">Audio books</a></h2>
+                            <a href="{% url 'book:book-list' %}" class="banner-link">Shop Now <i class="icon-long-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3"></div>
+
+                <div class="toolbox-left">
+                    <div class="toolbox-info">
+                        <strong>{{tags.count}} Tags found</strong>
+                    </div>
+                </div>
+
+                <div class="mb-3 mb-lg-5"></div>            
+
+                <div class="cat-blocks-container">
+                    <div class="row">                        
+                        <div class="widget">
+                            <h3 class="widget-title">Browse {{title}}</h3>
+                            <div class="widget-body">
+                                <div class="widget">
+                                    <div class="tagcloud">
+                                        {% if tags %} 
+                                            {% for t in tags %} 
+                                            <a href="{% url 'book:tags' t.slug %}" rel="tag">
+                                                #{{t.name}} 
+                                            </a>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for author in authors %}  
+                                            <!-- {% if author.author.exists %} -->
+                                            <a href="{{author.get_absolute_url}}">
+                                                {{author}}
+                                            </a>
+                                            <!-- {% endif %} -->
+                                            {% endfor %}    
+                                        {% endif %}                                     
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+
+                <div class="mb-2"></div>           
+               
+            </div><!-- End .col-lg-9 -->
+
+            <!-- Left side products -->
+            <aside class="col-lg-3 col-xl-5col order-lg-first">
+                <div class="sidebar sidebar-product">
+                    <div class="widget widget-products">                       
+                        <h4 class="widget-title"><span>You May Like It</span></h4>
+                        <div class="products">
+                            
+                            {% for book in books %}
+                            <div class="product product-sm">
+                                <figure class="product-media">
+                                    <a href="{{book.get_absolute_url}}">
+                                        <img src="{{book.cover.url}}" alt="Product image" class="product-image">
+                                    </a>
+                                </figure>
+
+                                <div class="product-body">
+                                    <h5 class="product-title"><a href="{{author.get_absolute_url}}">{{book.title}}</a></h5>
+                                    <div class="product-cat">
+                                        <a href="{{author.get_absolute_url}}"><span>{{book.author}}</span></a>                                                                                                                                      
+                                    </div>  
+                                    <div class="product-price">
+                                        {% if not book.is_sale %}
+                                        ${{book.regular_price}}
+                                        {% else %}
+                                        <!-- End if no sale price -->
+                                        <span class="new-price">${{book.discount_price}}</span>
+                                        <span class="old-price">${{book.regular_price}}</span>
+                                        {% endif %}
+                                    </div>                                            
+                                </div>
+                            </div>                        
+                            {% endfor %}
+                            <a href="{% url 'book:book-list' %}" class="btn btn-outline-dark-3"><span>View More Products</span><i class="icon-long-arrow-right"></i></a>
+                        </div><!-- End .products -->
+                       
+                    </div><!-- End .widget widget-products -->
+
+                    <div class="widget widget-banner-sidebar">
+                        <div class="banner-sidebar-title">ad box 280 x 280</div>
+                        
+                        <div class="banner-sidebar banner-overlay">
+                            <a href="#">
+                                <img src="{% static 'assets/images/blog/sidebar/banner.jpg' %}" alt="banner">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            <!-- End Left side filters -->
+        </div>
+    </div>
+</div><!-- End .page-content -->
+
+{% endblock content %}
+

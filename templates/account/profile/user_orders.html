@@ -1,0 +1,88 @@
+
+  <div class="cantainer">
+    {% if not orders %}   
+      <p>You have no orders yet!</p>
+    {% else %}     
+      {% for order in orders %}
+      <table class="table table-cart table-mobile">
+        <thead>
+          <tr>
+            <th class="price-col">Order #</th>
+            <th class="price-col">Order ID</th>
+            <th class="price-col">Date</th>
+            <th class="price-col">Status</th>
+            <th class="price-col">Shipping</th>
+            <th class="price-col">Payment</th>
+            <th class="price-col">Total Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>        
+            <tbody>
+              <tr>
+                <td class="total-col">{{forloop.counter}}</td>
+                <td>{{order.oid}}</td>
+                <td>{{order.created_date|date}}</td>
+                <td>{{order.get_order_status_display}}</td>
+                <td>"{{order.delivery.delivery_name}}" - ${{order.delivery.delivery_price}}</td>
+                <td>"{{order.get_payment_option_display}}"</td>
+                <td class="total-col">${{order.total_price}}</td>                
+              </tr>
+                 
+                  <table class="table table-cart table-mobile">                          
+                    <thead>
+                      <tr>
+                        <th>Item #</th>                      
+                        <th>Order Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Language</th>
+                        <th>Type</th>
+                        <th>SubTotal</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    
+                    <tbody>                  
+                      {% for item in order.items.all %}  
+                      <tr>       
+                        <td>{{forloop.counter}}.</td>              
+                        <td class="product-col">
+                          <div class="product">
+                            <figure class="product-media">
+                              <a href="{{item.book.get_absolute_url}}">
+                                <img src="{{item.book.cover.url}}" alt="Product image">                          
+                            </figure>
+          
+                            <h3 class="product-title">
+                              <a href="{{item.book.get_absolute_url}}">{{ item.book.title|truncatechars:20 }}</a>
+                            </h3>
+                          </div>
+                        </td>
+                        <td>${{item.price}}</td>
+                        <td>{{item.quantity}}</td>
+                        <td>{{item.language}}</td>
+                        <td>{{item.book_type}}</td>
+                        <td>${{item.subtotal_price}}</td>
+                      </tr>  
+                      {% endfor %}                      
+                    </tbody>
+                  </table>                                       
+            </tbody> 
+          </tr>  
+      </table>
+      <p>Shipping address: {{ order.formatted_shipping_address }}</p>   
+      {% endfor %}  
+    {% endif %}   
+    <br>
+  </div>    
+
+
+
+
+
+
+
+
+
+

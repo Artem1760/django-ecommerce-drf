@@ -1,0 +1,498 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Molla - eCommerce WebStore">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/images/icons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/images/icons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/icons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'assets/images/icons/site.html' %}">
+    <link rel="mask-icon" href="{% static 'assets/images/icons/safari-pinned-tab.svg' %}" color="#666666">
+    <link rel="shortcut icon" href="{% static 'assets/images/icons/favicon.ico' %}">
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="{% static 'assets/images/icons/browserconfig.xml' %}">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="{% static 'assets/vendor/line-awesome/css/line-awesome.min.css' %}">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/owl-carousel/owl.carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/magnific-popup/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/jquery.countdown.css' %}">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/skins/skin-demo-4.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/demos/demo-4.css' %}">
+      
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
+    {% block head %} {% endblock %}   
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <header class="header header-intro-clearance header-4">
+            <!-- Top-header -->
+            <div class="header-top">
+                <div class="container">   
+                    <div class="header-right">
+                        <ul class="top-menu">
+                            <li>    
+                                {% if user.is_authenticated %}                            
+                                <ul>                                    
+                                    <li><a href="{% url 'account:logout' %}">Sign Out</a></li>
+                                </ul>
+                                {% else %}
+                                <ul>                                    
+                                    <li><a href="{% url 'account:login' %}">Sign In / Sign Up</a></li>
+                                </ul>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div><!-- End .header-top -->
+
+            <div class="header-middle">
+                <div class="container">
+                    <div class="header-left">
+                        <button class="mobile-menu-toggler">
+                            <span class="sr-only">Toggle mobile menu</span>
+                            <i class="icon-bars"></i>
+                        </button>
+                        
+                        <a href="{% url 'core:index' %}" class="logo">
+                            <img src="{% static 'assets/images/demos/demo-4/logo.png' %}" alt="Molla Logo" width="105" height="25">
+                        </a>
+                    </div><!-- End .header-left -->
+
+                    <div class="header-center">
+                        <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
+                            <a href="{% url 'book:search' %}" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                            <form action="{% url 'book:search' %}" method="GET">
+                                <div class="header-search-wrapper search-wrapper-wide">
+                                    <label for="q" class="sr-only">Search</label>
+                                    <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search book ..." required>
+                                </div><!-- End .header-search-wrapper -->
+                            </form>
+                        </div><!-- End .header-search -->
+                    </div>
+
+                    <div class="header-right">
+                        {% if user.is_authenticated %} 
+                        <div class="dropdown compare-dropdown">
+                            <a href="{% url 'account:dashboard' %}" role="button" title="Account" aria-label="Account">
+                                <div class="icon">                               
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                                    </svg>                                   
+                                </div>
+                                <p>Account</p>
+                            </a>
+                        </div><!-- End .compare-dropdown -->
+                        {% endif %}
+
+                        <div class="wishlist">
+                            <a href="{% url 'account:wishlist' %}" title="Wishlist">
+                                <div class="icon">
+                                    <i class="icon-heart-o"></i>
+                                    <span class="wishlist-count badge">{{ request.user.users_wishlist.count|default:0 }}</span>
+                                </div>
+                                <p>Wishlist</p>
+                            </a>
+                        </div><!-- End .compare-dropdown -->
+
+                        <div class="dropdown cart-dropdown">
+                            <a href="{% url 'cart:cart-summary' %}" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                                <div class="icon">
+                                    <i class="icon-shopping-cart"></i>                                  
+                                    <span class="cart-count">{{ cart|length }}</span>                                   
+                                </div>
+                                <p>Cart</p>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <div class="dropdown-cart-products">
+                                    
+                                    {% for item in cart %}
+                                      <!-- Display 3 books in the cart icon -->
+                                    {% if forloop.counter <= 3 %}                                 
+                                    {% with book=item.book %}
+                                    <div class="product">
+                                        <div class="product-cart-details">
+                                            <h4 class="product-title">
+                                                <a href="{{book.get_absolute_url}}">{{ book.title }}</a>
+                                            </h4>
+
+                                            <span class="cart-product-info">
+                                                <span class="cart-product-qty">{{item.quantity}}</span>
+                                                x $
+                                                {% if not book.is_sale %}
+                                                    {{book.regular_price}}
+                                                {% else %}
+                                                    {{book.discount_price}}
+                                                {% endif %}
+                                            </span>
+                                        </div><!-- End .product-cart-details -->
+
+                                        <figure class="product-image-container">
+                                            <a href="{{book.get_absolute_url}}" class="product-image">
+                                                <img src="{{book.cover.url}}" alt="product">
+                                            </a>
+                                        </figure>
+                                        <!-- Delete cart item -->
+                                        <form method="POST" action="{% url 'cart:cart-preview-delete' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="remove_cart_item" value="{{book.id}}">
+                                            <button type="submit" class="btn-remove" title="Remove Product">
+                                                <i class="icon-close"></i>
+                                            </button>
+                                        </form>
+                                       
+                                    </div>  
+                                    {% endwith %}  
+                                    {% endif %}                                   
+                                    {% endfor %}
+                                                                            
+                                </div>
+
+                                <div class="dropdown-cart-total">
+                                    <span>Total</span>
+
+                                    <span class="cart-total-price">${{ cart.get_subtotal_price }}</span>
+                                </div>
+
+                                <div class="dropdown-cart-action">
+                                    <a href="{% url 'cart:cart-summary' %}" class="btn btn-primary">View Cart</a>
+                                    <a href="{% url 'checkout:checkout' %}" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-bottom sticky-header">
+                <div class="container">
+                    <div class="header-left">
+                        <div class="dropdown category-dropdown">
+                            <a href="{% url 'book:category-list' %}" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static" title="Browse Categories">
+                                Browse Categories <i class="icon-angle-down"></i>
+                            </a>
+
+                            <div class="dropdown-menu">
+                                <nav class="side-nav">
+                                    <ul class="menu-vertical sf-arrows">
+                                        
+                                    {% for cat in categories %}
+                                        {% if cat.category.exists %}  {# Check if the category has associated books #}
+                                        <li><a href="{% url 'book:category' cat.slug %}">{{ cat.name }}</a></li> 
+                                        {% endif %}
+                                    {% endfor %}
+                                        
+                                        <li class="item-lead"><a href="{% url 'book:category-list' %}">All</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="header-center">
+                        <nav class="main-nav">
+                            <ul class="menu sf-arrows">
+                                <li class="megamenu-container">
+                                    <a href="{% url 'core:index' %}" class="sf-with">Home</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'book:hot-offers' %}" class="sf-with">Hot offers</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'book:book-list' %}" class="sf-with">Shop</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'core:about-us' %}" class="sf-with">About us</a>  
+                                </li>
+                                <li>
+                                    <a href="{% url 'core:contact' %}" class="sf-with">Contacts</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="header-right">
+                        <i class="la la-lightbulb-o"></i><p>Clearance<span class="highlight">&nbsp;Up to 30% Off</span></p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="container text-center">
+            <div class="alert alert-{{message.tags}}">
+                <strong>{{message}}</strong>
+            </div>
+        </div>  
+        {% endfor %}
+        {% endif %}
+
+        <script>
+        setTimeout (() => {
+        $(".alert").alert("close");
+        }, 5000)
+        </script>
+        <!-- End Flash Messages -->
+
+        <main class="main">
+            <div class="mb-2"></div>
+            {% block content %}
+            {% endblock content %}
+            <div class="mb-2"></div>
+
+            <div class="container">
+                <hr class="mb-0">
+            </div>
+
+            <div class="icon-boxes-container bg-transparent">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="icon-box icon-box-side">
+                                <span class="icon-box-icon text-dark">
+                                    <i class="icon-rocket"></i>
+                                </span>
+                                <div class="icon-box-content">
+                                    <h3 class="icon-box-title">Worldwide shipping</h3>
+                                    <p>Fast & Safe</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="icon-box icon-box-side">
+                                <span class="icon-box-icon text-dark">
+                                    <i class="icon-rotate-left"></i>
+                                </span>
+
+                                <div class="icon-box-content">
+                                    <h3 class="icon-box-title">Free Returns</h3>
+                                    <p>Within 30 days</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="icon-box icon-box-side">
+                                <span class="icon-box-icon text-dark">
+                                    <i class="icon-info-circle"></i>
+                                </span>
+
+                                <div class="icon-box-content">
+                                    <h3 class="icon-box-title">Reasonable prices</h3>
+                                    <p>Available for everyone</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="icon-box icon-box-side">
+                                <span class="icon-box-icon text-dark">
+                                    <i class="icon-life-ring"></i>
+                                </span>
+
+                                <div class="icon-box-content">
+                                    <h3 class="icon-box-title">We Support</h3>
+                                    <p>24/7 amazing services</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="cta bg-image bg-dark pt-4 pb-5 mb-0" style="background-image: url('static/assets/images/demos/demo-4/bg-5.jpg');">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-10 col-md-8 col-lg-6">
+                            <div class="cta-heading text-center">
+                                <h3 class="cta-title text-white">Get The Latest Deals</h3>
+                                <p class="cta-desc text-white">and receive <span class="font-weight-normal">$20 coupon</span> for first shopping</p><!-- End .cta-desc -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        	<div class="footer-middle">
+	            <div class="container">
+	            	<div class="row">
+	            		<div class="col-sm-6 col-lg-3">
+	            			<div class="widget widget-about">
+	            				<img src="{% static 'assets/images/demos/demo-4/logo-footer.png' %}" class="footer-logo" alt="Footer Logo" width="105" height="25">
+	            				<p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. </p>
+
+	            				<div class="widget-call">
+                                    <i class="icon-phone"></i>
+                                    Got Question? Call us 24/7
+                                    <a href="tel:#">+0123 456 789</a>         
+                                </div>
+	            			</div>
+	            		</div>
+
+	            		<div class="col-sm-6 col-lg-3">
+	            			<div class="widget">
+	            				<h4 class="widget-title">Useful Links</h4>
+
+	            				<ul class="widget-list">
+	            					<li><a href="{% url 'core:about-us' %}">About Molla</a></li>
+                                    <li><a href="{% url 'core:about-us' %}">Our Services</a></li>
+	            					<li><a href="{% url 'core:about-us' %}">How to shop on Molla</a></li>
+	            					<li><a href="{% url 'core:contact' %}">FAQ</a></li>
+	            					<li><a href="{% url 'core:contact' %}">Contact us</a></li>
+	            				</ul>
+	            			</div>
+	            		</div>
+
+	            		<div class="col-sm-6 col-lg-3">
+	            			<div class="widget">
+	            				<h4 class="widget-title">Customer Service</h4>
+
+	            				<ul class="widget-list">
+	            					<li><a href="{% url 'core:about-us' %}">Payment Methods</a></li>
+	            					<li><a href="{% url 'core:about-us' %}">Money-back guarantee!</a></li>
+	            					<li><a href="{% url 'core:about-us' %}">Returns</a></li>
+	            					<li><a href="{% url 'core:about-us' %}">Shipping</a></li>
+	            					<li><a href="{% url 'core:about-us' %}">Terms and conditions</a></li>
+	            					<li><a href="{% url 'core:about-us' %}">Privacy Policy</a></li>
+	            				</ul>
+	            			</div>
+	            		</div>
+
+	            		<div class="col-sm-6 col-lg-3">
+	            			<div class="widget">
+	            				<h4 class="widget-title">My Account</h4>
+
+	            				<ul class="widget-list">
+	            					<li><a href="{% url 'account:login' %}">Sign In</a></li>
+	            					<li><a href="{% url 'cart:cart-summary' %}">View Cart</a></li>
+	            					<li><a href="{% url 'account:wishlist' %}">My Wishlist</a></li>	            				
+	            					<li><a href="{% url 'core:contact' %}">Help</a></li>
+	            				</ul>
+	            			</div>
+	            		</div>
+	            	</div>
+	            </div>
+	        </div>
+
+	        <div class="footer-bottom">
+	        	<div class="container">
+	        		<p class="footer-copyright">Copyright © 2023 Molla Store. All Rights Reserved.</p><!-- End .footer-copyright -->
+	        		<figure class="footer-payments">
+	        			<img src="{% static 'assets/images/payments.png' %}" alt="Payment methods" width="272" height="20">
+	        		</figure>
+	        	</div>
+	        </div>
+        </footer>
+    </div>
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay"></div>
+
+    <div class="mobile-menu-container mobile-menu-light">
+        <div class="mobile-menu-wrapper">
+            <span class="mobile-menu-close"><i class="icon-close"></i></span>
+            
+            <form action="" method="GET" class="mobile-search">
+                <label for="mobile-search" class="sr-only">Search</label>
+                <input type="search" class="form-control" name="mobile-search" id="mobile-search" placeholder="Search in..." required>
+                <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+            </form>
+
+            <ul class="nav nav-pills-mobile nav-border-anim" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="mobile-menu-link" data-toggle="tab" href="#mobile-menu-tab" role="tab" aria-controls="mobile-menu-tab" aria-selected="true">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="mobile-cats-link" data-toggle="tab" href="{% url 'book:category-list' %}" role="tab" aria-controls="mobile-cats-tab" aria-selected="false">Categories</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="mobile-menu-tab" role="tabpanel" aria-labelledby="mobile-menu-link">
+                    <nav class="mobile-nav">
+                        <ul class="mobile-menu">
+                            <li class="active">
+                                <a href="{% url 'core:index' %}">Home</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'book:hot-offers' %}">Hot offers</a>                              
+                            </li>
+                            <li>
+                                <a href="{% url 'book:book-list' %}" class="sf-with-ul">Shop</a>        
+                            </li>
+                            <li>
+                                <a href="{% url 'core:about-us' %}">About us</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'core:contact' %}">Contacts</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="tab-pane fade" id="mobile-cats-tab" role="tabpanel" aria-labelledby="mobile-cats-link">
+                    <nav class="mobile-cats-nav">
+                        <ul class="mobile-cats-menu">    
+                            {% for cat in categories %}                        
+                            <li><a href="{% url 'book:category' cat.slug %}">{{cat}}</a></li>
+                            {% endfor %}                                                      
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="social-icons">
+                <a href="https://www.facebook.com/" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
+                <a href="https://twitter.com/" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
+                <a href="https://www.instagram.com/" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
+                <a href="https://www.youtube.com/" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Plugins JS File -->
+    <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.hoverIntent.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'assets/js/superfish.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap-input-spinner.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.plugin.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.countdown.min.js' %}"></script>
+    <!-- Main JS File -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    <script src="{% static 'assets/js/demos/demo-4.js' %}"></script>    
+
+    {% block script %} {% endblock %}
+   
+</body>
+</html>

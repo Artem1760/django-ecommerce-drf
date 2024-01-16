@@ -1,0 +1,94 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+
+
+ <!-- Main Banner -->
+ <div class="intro-section pt-lg-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-6">
+                <div class="banner banner-big banner-overlay">
+                    <a href="{% url 'book:book-list' %}">
+                        <img src="{% static 'assets/images/demos/demo-20/banners/banner-1.jpg' %}" alt="Banner">
+                    </a>
+
+                    <div class="banner-content">
+                        <h4 class="banner-subtitle text-white"><a href="{% url 'book:book-list' %}">Your Guide To The World</a></h4>
+                        <h2 class="banner-title text-white"><a href="{% url 'book:book-list' %}">Find out more</a><br>Books</h2>
+                        <a href="{% url 'book:book-list' %}" class="btn btn-outline-white-3 banner-link">Shop now<i class="icon-long-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="banner banner-overlay">
+                    <a href="{% url 'book:book-list' %}">
+                        <img src="{% static 'assets/images/demos/demo-20/banners/banner-2.jpg' %}" alt="Banner">
+                    </a>
+
+                    <div class="banner-content banner-content-stretch">
+                        <h4 class="banner-subtitle text-white"><a href="{% url 'book:book-list' %}">New This Week</a></h4>
+                        <h3 class="banner-title text-white"><a href="{% url 'book:book-list' %}">Discover Our <br>Best Romance <br>Books</a></h3>
+                        <a href="{% url 'book:book-list' %}" class="btn btn-outline-white-3 banner-link">Discover Now<i class="icon-long-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-sm-6 col-lg-3">
+                <div class="banner banner-small banner-overlay">
+                    <a href="{% url 'book:hot-offers' %}">
+                        <img src="{% static 'assets/images/demos/demo-20/banners/banner-3.jpg' %}" alt="Banner">
+                    </a>
+
+                    <div class="banner-content">
+                        <h4 class="banner-subtitle text-white d-lg-none d-xl-block"><a href="{% url 'book:hot-offers' %}">Deal Of The Day</a></h4><!-- End .banner-subtitle -->
+                        <h3 class="banner-title text-white"><a href="{% url 'book:hot-offers' %}">20% Off Use</a></h3>
+                        <a href="{% url 'book:hot-offers' %}" class="btn btn-outline-white-3 banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="banner banner-small banner-overlay">
+                    <a href="{% url 'book:book-list' %}">
+                        <img src="{% static 'assets/images/demos/demo-20/banners/banner-4.jpg' %}" alt="Banner">
+                    </a>
+
+                    <div class="banner-content">
+                        <h4 class="banner-subtitle text-white d-lg-none d-xl-block"><a href="{% url 'book:book-list' %}">New Arrivals</a></h4><!-- End .banner-subtitle -->
+                        <h3 class="banner-title text-white"><a href="{% url 'book:book-list' %}">Business <br>& Economics</a></h3><!-- End .banner-title -->
+                        <a href="{% url 'book:book-list' %}" class="btn btn-outline-white-3 banner-link">Discover Now<i class="icon-long-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Main Banner -->
+
+<div class="mb-5"></div>
+
+<!-- New Arrivals Products -->
+<div class="container for-you">
+    <div class="heading heading-flex mb-3">
+        <div class="heading-left">
+            <h2 class="title">New Arrivals</h2>
+        </div>
+
+       <div class="heading-right">
+            <a href="{% url 'book:book-list' %}" class="title-link">View All Books <i class="icon-long-arrow-right"></i></a>
+       </div>
+    </div>
+
+    <div class="products">
+        <div class="row justify-content-center">
+            {% for book in books %}
+                {% include 'book/partials/book_partial.html' %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- End New Arrivals Products -->
+
+{% endblock content %}

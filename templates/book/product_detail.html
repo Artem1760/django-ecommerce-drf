@@ -1,0 +1,324 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% load tailwind_filters %}
+{% block title %}{{title}}{% endblock title %}
+{% block head %} 
+<link rel="stylesheet" href="{% static 'assets/css/plugins/nouislider/nouislider.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/skins/skin-demo-13.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/demos/demo-13.css' %}"> 
+{% endblock head %}
+{% block content %}
+
+<div class="page-wrapper">
+    <main class="main">
+        <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+            <div class="container d-flex align-items-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'book:book-list' %}">Shop</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Product detail ({{book.isbn}})</li>
+                </ol>                   
+            </div>
+        </nav>
+
+        <div class="page-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="product-details-top">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="product-gallery">
+                                        <figure class="product-main-image">
+                                            {% if book.is_sale %}
+                                            <span class="product-label label-circle label-sale">-{{book.get_percentage|floatformat:0}}% Sale</span>
+                                            {% endif %} 
+                                            <img id="product-zoom" src="{{book.cover.url}}" data-zoom-image="{{book.cover.url}}" alt="product image">   <!-- add big pic for zoom and change url -->
+
+                                            <a href="{{book.cover.url}}" id="btn-product-gallery" class="btn-product-gallery">
+                                                <i class="icon-arrows"></i>
+                                            </a>
+                                        </figure><!-- End .product-main-image -->
+
+                                        <div id="product-zoom-gallery" class="product-image-gallery">
+                                            {% for image in book.book_images.all %}
+                                            <a class="product-gallery-item active" href="{{ image.image.url }}" data-image="{{ image.image.url }}" data-zoom-image="{{ image.image.url }}">      <!-- add big pic for zoom and change url -->
+                                                <img src="{{ image.image.url }}" alt="product side">
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="product-details product-details-sidebar">
+                                        <h1 class="product-title">{{ book.title }}</h1>
+                                        <div class="product-cat">
+                                            <span>Publication date:</span> {{ book.publication_date|date:'d M, Y' }}                                                                                     
+                                        </div>
+                                       
+                                        <div class="product-cat">
+                                            <span>by (Author)</span>
+                                            <a href="{% url 'book:authors' book.author.slug %}">{{ book.author }}</a>                                                                                    
+                                        </div> 
+                                        
+                                        <div class="ratings-container">
+                                            <div class="ratings">
+                                                <div class="ratings-val" style="width: {{book.average_star_rating|book_rating_percentage}}%;"></div><!-- End .ratings-val -->
+                                                {{book.average_star_rating|floatformat:1}}
+                                            </div>
+                                            <p class="ratings-text">( {{book.reviews.count}} Review{{book.reviews.count|pluralize}} )</p>
+                                        </div>
+
+                                        <div class="product-price">
+                                            <!-- if no sale price -->
+                                            {% if not book.is_sale %}
+                                            ${{book.regular_price}}
+                                            {% else %}
+                                            <!-- End if no sale price -->
+                                            <span class="new-price">${{book.discount_price}}</span>
+                                            <span class="old-price">${{book.regular_price}}</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="product-content">
+                                            <p>{{book.description|truncatechars:300|safe}}</p>
+                                        </div>
+                                        
+                                        <!-- Add to cart form -->
+                                        <form method="POST" action="{% url 'cart:cart-add' %}">
+                                        {% csrf_token %}
+
+                                            <div class="details-filter-row details-row-size">
+                                                <label for="book-type">Type:</label>
+                                                <div class="select-custom ml-5">
+                                                    <select name="book_type_id" id="book-type" class="form-control">                                                       
+                                                        {% for t in book.book_type.all %}
+                                                        <option name="book_type_id" value="{{t.id}}" selected="selected">{{t}}</option>
+                                                        {% endfor %}                                                     
+                                                    </select>
+                                                </div>       
+                                            </div>
+
+                                            <div class="details-filter-row details-row-size">
+                                                <label for="language">Language:</label>
+                                                <div class="select-custom ml-5">                                                   
+                                                    <select name="language_id" id="language" class="form-control">                                                        
+                                                        {% for lan in book.languages.all %}
+                                                        <option name="language_id" value="{{lan.id}}" selected="selected">{{lan}}</option>
+                                                        {% endfor %}                                                     
+                                                    </select>                       
+                                                </div>
+                                            </div>
+                                                                                        
+                                            <div class="product-details-action">
+                                                <div class="details-action-col">
+                                                    <label for="qty">Qty:</label>
+                                                    <div class="product-details-quantity ml-5">
+                                                        <input type="number" name="book_qty" id="qty" class="form-control" value="1" min="1" max="{{book.quantity}}" step="1" data-decimals="0" required>
+                                                        <span>In stock: {{ book.quantity }}</span>
+                                                    </div> 
+                                                </div>  
+                                                <input type="hidden" name="book_id" value="{{ book.id }}">
+                                                <button type="submit" value="add_to_cart" class="btn-product btn-cart" title="Add to cart"><span>Add to Cart</span></button>                                                                                                                                        
+                                            </div>
+                                        </form> 
+                                        <!-- End Add to cart form -->                                        
+                                      
+
+                                        <div class="product-details-footer details-footer-col"> 
+                                             <!-- Add to wishlist -->
+                                            <div class="details-action-wrapper mb-3">                                         
+                                                <a href="{% url 'account:user-wishlist' book.id  %}" class="btn-product btn-wishlist" title="Wishlist" role="button" aria-disabled="true"><span>Add to Wishlist</span></a>                                                    
+                                            </div>
+                                            <!-- End Add to wishlist -->  
+
+                                            <div class="product-cat">
+                                                <span>Category:</span>
+                                                <a href="{% url 'book:category' book.category.slug %}">{{book.category}}</a>                                        
+                                            </div><!-- End .product-cat -->
+
+                                            <div class="product-cat">
+                                                <span>Print length:</span>
+                                                <a>{{book.num_pages}} pages</a>                                        
+                                            </div><!-- End .product-cat -->
+
+                                            <div class="product-cat">
+                                                <span>Publisher:</span>
+                                                <a>{{book.publisher}}</a>                                         
+                                            </div><!-- End .product-cat -->
+
+                                            <div class="product-cat">
+                                                <span>Tags:</span>
+                                                {% for tag in book.tags.all %} 
+                                                    <a href="{% url 'book:tags' tag.slug %}" rel="tag">
+                                                        #{{tag.name}}, 
+                                                    </a>
+                                                {% endfor %}                  
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-details-tab">
+                            <ul class="nav nav-pills justify-content-center" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab" role="tab" aria-controls="product-desc-tab" aria-selected="true">Description</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="product-info-link" data-toggle="tab" href="#product-info-tab" role="tab" aria-controls="product-info-tab" aria-selected="false">Additional information</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping & Returns</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews ({{book.reviews.count}})</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="product-desc-tab" role="tabpanel" aria-labelledby="product-desc-link">
+                                    <div class="product-desc-content">
+                                        <h3>Product Information</h3>
+                                        <p>{{book.description|safe}}</p>
+                                    </div>
+                                </div><!-- .End .tab-pane -->
+                                <div class="tab-pane fade" id="product-info-tab" role="tabpanel" aria-labelledby="product-info-link">
+                                    <div class="product-desc-content">
+                                        <h3>Information</h3>
+                                        <p>{{book.specification|safe}}</p>
+                                    </div>
+                                </div><!-- .End .tab-pane -->
+                                <div class="tab-pane fade" id="product-shipping-tab" role="tabpanel" aria-labelledby="product-shipping-link">
+                                    <div class="product-desc-content">
+                                        <h3>Delivery & returns</h3>
+                                        <p>We deliver to over 100 countries around the world. For full details of the delivery options we offer, please view our Delivery information<br>
+                                        We hope you’ll love every purchase, but if you ever need to return an item you can do so within a month of receipt. For full details of how to make a return, please view our Returns information</p>
+                                    </div>
+                                </div><!-- .End .tab-pane -->
+                                <div class="tab-pane fade" id="product-review-tab" role="tabpanel" aria-labelledby="product-review-link">
+                                    <div class="reviews">
+                                        <h3>Reviews ({{book.reviews.count}})</h3>  
+                                        
+                                        {% for rev in book.reviews.all %}                                          
+                                        <div class="review">
+                                            <div class="row no-gutters">
+                                                <div class="col-auto">
+                                                    <h4>{{rev.user.username}}</h4>
+                                                    <div class="ratings-container">
+                                                        <div class="ratings">
+                                                            <div class="ratings-val" style="width: {{ rev.star_rating|book_rating_percentage }}%;"></div><!-- End .ratings-val -->
+                                                            {{rev.star_rating}}
+                                                        </div> <!-- End .ratings -->                                                        
+                                                    </div>
+                                                    <span class="review-date">{{rev.created_date|date:'d M, Y'}}</span>
+                                                </div>
+                                                <div class="col">
+                                                    <h4>Feedback for "{{book.title}}"</h4>
+
+                                                    <div class="review-content">
+                                                        <p>{{rev}}</p>
+                                                    </div>
+
+                                                    {% if request.user == rev.user %} 
+                                                    <div class="review-action">
+                                                        <a href="{% url 'book:delete-review' rev.id %} ">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
+                                                            </svg> Delete
+                                                        </a>
+                                                        <a href="{% url 'book:update-review' rev.id %} ">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                                            </svg> Update
+                                                        </a>
+                                                    </div>
+                                                    {% endif %} 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+
+                                        {% if user.is_authenticated %}
+                                         {% include 'book/partials/add_review.html' %}    
+                                        {% endif %}                                          
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3"></div>
+
+                        <!-- Recently Viewed Products -->
+                        {% if recently_viewed_books %}
+                            {% include 'book/partials/recently_viewed.html' %}    
+                        {% endif %}                      
+                        <!-- End Recomendation Product -->                        
+                    </div>
+                    <!-- RELATED BOOKS -->
+                    <aside class="col-lg-3">
+                        <div class="sidebar sidebar-product">
+                            <div class="widget widget-products">
+                                {% if related_books %}
+                                <h4 class="widget-title">Related Books</h4><!-- End .widget-title -->
+                                <div class="products">
+                                    
+                                    {% for book in related_books %}
+                                    <div class="product product-sm">
+                                        <figure class="product-media">
+                                            <a href="{{book.get_absolute_url}}">
+                                                <img src="{{book.cover.url}}" alt="Product image" class="product-image">
+                                            </a>
+                                        </figure>
+
+                                        <div class="product-body">
+                                            <h5 class="product-title"><a href="{{book.get_absolute_url}}">{{book.title}}</a></h5><!-- End .product-title -->
+                                            <div class="product-cat">
+                                                <span>{{ book.author }}</span>                                                                                                                                      
+                                            </div><!-- End .product-cat -->   
+                                            <div class="product-price">
+                                                {% if not book.is_sale %}
+                                                ${{book.regular_price}}
+                                                {% else %}
+                                                <!-- End if no sale price -->
+                                                <span class="new-price">${{book.discount_price}}</span>
+                                                <span class="old-price">${{book.regular_price}}</span>
+                                                {% endif %}
+                                            </div><!-- End .product-price -->                                                
+                                        </div><!-- End .product-body -->
+                                    </div><!-- End .product product-sm -->                                        
+                                    {% endfor %}
+                                    <a href="{% url 'book:related-books' book.slug %}" class="btn btn-outline-dark-3"><span>View More Products</span><i class="icon-long-arrow-right"></i></a>
+                               
+                                {% endif %}                              
+
+                                </div><!-- End .products -->                                
+                            </div><!-- End .widget widget-products -->
+
+                            <div class="widget widget-banner-sidebar">
+                                <div class="banner-sidebar-title">ad box 280 x 280</div><!-- End .ad-title -->
+                                
+                                <div class="banner-sidebar banner-overlay">
+                                    <a href="#">
+                                        <img src="{% static 'assets/images/blog/sidebar/banner.jpg' %}" alt="banner">
+                                    </a>
+                                </div><!-- End .banner-ad -->
+                            </div><!-- End .widget -->
+                        </div><!-- End .sidebar sidebar-product -->
+                    </aside>
+                    <!-- END RELATED BOOKS -->
+                </div>
+            </div>
+        </div>
+    </main>    
+</div>
+<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+{% endblock content %}
+
+{% block script %} 
+<script src="{% static 'assets/js/jquery.elevateZoom.min.js' %}"></script>
+{% endblock %}

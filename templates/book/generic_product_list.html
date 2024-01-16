@@ -1,0 +1,87 @@
+{% extends 'main.html' %}
+
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+
+<nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+    <div class="container d-flex align-items-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+
+        {% if category_product_list %}            
+            <li class="breadcrumb-item"><a href="{% url 'book:category-list' %}">Categories</a></li>
+        {% elif related_books %}
+            <li class="breadcrumb-item"><a href="{{book.get_absolute_url}}">Book: "{{book.title}}"</a></li>
+        {% elif search %}
+            <li class="breadcrumb-item active" aria-current="page">Search Results for "{{ query }}"</li>
+        {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ obj }}</li>
+        </ol>                   
+    </div>
+</nav>
+
+<div class="container for-you">
+    <div class="toolbox">
+        <div class="toolbox-left">
+            <div class="toolbox-info">                           
+                Showing <span>{{books|length}}</span> of <span>{{total_books_count}}</span> Book{{total_books_count|pluralize}}               
+            </div>
+        </div>
+    
+        <div class="toolbox-right">
+            <div class="toolbox-sort">
+                <label for="sortby">Sort by:</label>
+                <div class="select-custom">
+                    <form method="GET" id="sortForm">
+                        <select name="sortby" id="sortby" class="form-control" onchange="updateSortBy()">  
+                            <option value="default" {% if not request.GET.sortby %}selected{% endif %}>Default</option>
+                            <option value="most-reviewed" {% if request.GET.sortby == 'most-reviewed' %}selected{% endif %}>Most Reviewed</option>                            
+                            <option value="most-rated" {% if request.GET.sortby == 'most-rated' %}selected{% endif %}>Most Rated</option>                            
+                            <option value="price-LH" {% if request.GET.sortby == 'price-LH' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price-HL" {% if request.GET.sortby == 'price-HL' %}selected{% endif %}>Price: High to Low</option>                            
+                            <option value="old" {% if request.GET.sortby == 'old' %}selected{% endif %}>By Old</option>
+                        </select>
+                    </form>                    
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Books data -->
+    <div class="products">
+        <div class="row justify-content-center"> 
+            {% for book in books %}
+                {% include 'book/partials/book_partial.html' %}
+            {% endfor %}
+        </div>
+    </div>
+    <!-- End Books data -->
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        {% include 'book/partials/paginator_partial.html' %}
+    {% endif %}
+    <!-- End Pagination -->
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    // Function to submit form. If sort the search result it renders the correct url.  
+    function updateSortBy() {
+        var sortbySelect = document.getElementById('sortby');
+        
+        // Check if 'q' parameter is present
+        var qParam = '{{ request.GET.q }}';
+        var qString = qParam ? 'q=' + encodeURIComponent(qParam) + '&' : '';
+    
+        // Construct the new URL with existing query parameters and the selected sortby
+        var newUrl = window.location.pathname + '?' + qString + 'sortby=' + encodeURIComponent(sortbySelect.value);
+        
+        // Redirect to the new URL
+        window.location.href = newUrl;
+    }
+</script>
+{% endblock script %}

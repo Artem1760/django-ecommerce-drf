@@ -1,0 +1,45 @@
+<a href="{% url 'account:add-address' %}" class="btn btn-outline-primary-2"><span>Add Address</span><i class="icon-long-arrow-right"></i></a>
+<div class="row">
+    {% if addresses %}
+    {% for address in addresses %}    
+    <div class="col-lg-6">
+        <div class="card card-dashboard">
+            <div class="card-body">
+                <h3 class="card-title">
+                    {% if address.default %}DEFAULT{% endif %} Address {{ forloop.counter }}
+                </h3>
+
+                <p>Name: {{address.first_name}} {{address.last_name}}<br>
+                Country: {{address.country}}<br>
+                Address: {{address.street_address}}<br>
+                Town/City: {{address.town_city}}<br>
+                State: {{address.country_state}}<br>
+                Postcode: {{address.postcode}}<br>
+                Phone: {{address.phone}}<br>
+                Email: {{address.email}}<br>               
+               
+                <a href="{% url 'account:edit-address' address.id %}">Edit <i class="icon-edit"></i>|</a>
+                <a href="{% url 'account:delete-address' address.id %}">Delete <i class="icon-edit"></i>|</a>
+                {% if not address.default %}
+                <a href="{% url 'account:set-default' address.id %}">Default <i class="icon-edit"></i></a></p>
+                {% endif %}    
+            
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-lg-6">
+        <div class="card card-dashboard">
+            <div class="card-body">
+                <h3 class="card-title">Add Address</h3>
+
+                <p>You have not set up the address yet.<br>
+                <a href="{% url 'account:add-address' %}">Add <i class="icon-edit"></i></a></p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+

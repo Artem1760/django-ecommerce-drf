@@ -1,0 +1,67 @@
+<form method="POST" action="{% url 'account:account-details' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {# Display form errors #}
+    <pre>{{ user_form.errors }}</pre>
+
+    <div class="row">
+        <div class="col-sm-6">            
+            <label for="form-firstname">{{ user_form.first_name.label}}</label>
+            {{ user_form.first_name }}
+        </div>
+
+        <div class="col-sm-6">            
+            <label for="form-lastname">{{ user_form.last_name.label}}</label>
+            {{ user_form.last_name }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">           
+            <label for="form-username">{{ user_form.username.label}}</label>    
+            {{ user_form.username }}
+        </div>
+
+        <div class="col-sm-6">           
+            <label for="form-phone">{{ user_form.phone.label}}</label>    
+            {{ user_form.phone }}
+        </div>
+    </div>
+       
+    <label for="form-email">{{ user_form.email.label}}</label>
+    {{ user_form.email }}
+
+    <div class="row">
+        <div class="col-sm-6">
+            <label for="form-avatar">{{ user_form.avatar.label }}</label>
+            <div>
+                {% if user_form.avatar.value %}
+                    <img src="{{ user_form.avatar.value.url }}" alt="Avatar" style="max-width: 100px;">
+                    <br>
+                {% endif %}
+                {{ user_form.avatar }}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-outline-primary-2">
+        <span>SAVE CHANGES</span>
+        <i class="icon-long-arrow-right"></i>
+    </button>
+    <hr>
+</form>
+
+<div class="col-sm-6">
+    <a href="{% url 'account:password-reset' %}" class="forgot-link">Change password?</a>
+</div> 
+
+<hr>
+
+<div class="col-sm-6"> 
+    <a href="{% url 'account:delete-user' %}" 
+       class="btn btn-danger btn-block py-2 mb-4 mt-5 fw-bold w-100">
+       Delete Account
+    </a>
+</div>
+
+

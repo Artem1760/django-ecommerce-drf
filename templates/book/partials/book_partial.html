@@ -1,0 +1,48 @@
+{% load custom_filters %}
+
+<div class="col-6 col-md-4 col-lg-3">
+    <div class="product product-2">
+        <figure class="product-media">
+            {% if book.is_sale %}
+            <span class="product-label label-circle label-sale">-{{book.get_percentage|floatformat:0}}% Sale</span>
+            {% endif %}
+            <a href="{{book.get_absolute_url}}">
+                <img src="{{book.cover.url}}" alt="Product image" class="product-image">
+            </a>
+
+            <div class="product-action-vertical">
+                <a href="{% url 'account:user-wishlist' book.id  %}" class="btn-product btn-wishlist" title="Wishlist" role="button" aria-disabled="true"></a>
+            </div>
+           
+            <form class="product-action" method="POST" action="{% url 'cart:cart-add' %}">
+                {% csrf_token %}
+                <input type="hidden" name="book_id" value="{{ book.id }}">
+                <input type="hidden" name="book_qty" value="1">  {# Default quantity is set to 1 #}                
+                <button type="submit" value="add_to_cart" title="Add to cart" class="btn-product btn-cart"><span>Add to Cart</span></button>                
+            </form>    
+           
+        </figure>
+
+        <div class="product-body">
+            <div class="product-cat">
+                <a href="{% url 'book:authors' book.author.slug %}">{{book.author}}</a>
+            </div>
+            <h3 class="product-title"><a href="{{book.get_absolute_url}}">{{book.title}}</a></h3><!-- End .product-title -->
+            <div class="product-price">
+                {% if book.is_sale %}
+                <span class="new-price">${{book.discount_price}}</span>
+                <span class="old-price">Was ${{book.regular_price}}</span>
+                {% else %}
+                ${{book.regular_price}}
+                {% endif %}
+            </div><!-- End .product-price -->
+            <div class="ratings-container">
+                <div class="ratings">
+                    <div class="ratings-val" style="width: {{book.average_star_rating|book_rating_percentage}}%;"></div>
+                    {{book.average_star_rating}}
+                </div><!-- End .ratings -->
+                <span class="ratings-text">( {{book.reviews.count}} Reviews )</span> 
+            </div>          
+        </div>
+    </div>
+</div>

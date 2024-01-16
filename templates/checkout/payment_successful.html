@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+
+<div class="mb-3"></div>
+<div class="container">
+    <div class="col-lg-9">
+        <h2 class="page-title">Payment Successful</h2>        
+    </div>
+    <div class="col-lg-9"> 
+        <p>Order Summary</p>
+    </div>
+    <hr />
+    <div class="col-lg-9">         
+        <p>View all <a href="{% url 'account:wishlist' %}">orders</a></p>
+    </div>
+</div>
+
+{% endblock %}

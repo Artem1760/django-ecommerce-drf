@@ -1,0 +1,174 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+
+<div class="page-header text-center" style="background-image: url('/static/assets/images/page-header-bg.jpg')">
+    <div class="container">
+        <h1 class="page-title">Checkout<span>Shop</span></h1>
+    </div>
+</div>
+<nav aria-label="breadcrumb" class="breadcrumb-nav">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'book:book-list' %}">Shop</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'cart:cart-summary' %}">Cart</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+      </ol>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="checkout">
+        <div class="container">    
+            <form method="POST" id="checkout-form">
+                {% csrf_token %}               
+                <!-- Added this line to update the session with the selected address -->
+                <input type="hidden" name="address_id" value="{{ address_form.id }}">
+
+                <div class="row">
+                    <div class="col-lg-9">
+                        <h2 class="checkout-title">Address Details</h2>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>First Name *</label>
+                                    <input type="text" class="form-control" value="{{ address_form.first_name.value|default:'' }}" name="first_name" required>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>Last Name *</label>
+                                    <input type="text" class="form-control" value="{{ address_form.last_name.value|default:'' }}" name="last_name" required>
+                                </div>
+                            </div>
+
+                            <label>Country *</label>
+                            <input type="text" class="form-control" value="{{ address_form.country.value|default:'' }}" name="country" required>
+
+                            <label>Street address *</label>
+                            <input type="text" class="form-control" value="{{ address_form.street_address.value|default:'' }}" name="street_address" placeholder="House number, Street name..." required>
+                            
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Town / City *</label>
+                                    <input type="text" class="form-control" value="{{ address_form.town_city.value|default:'' }}" name="town_city" required>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>State *</label>
+                                    <input type="text" class="form-control" value="{{ address_form.country_state.value|default:'' }}" name="country_state" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Postcode / ZIP *</label>
+                                    <input type="text" class="form-control" value="{{ address_form.postcode.value|default:'' }}" name="postcode" required>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>Phone *</label>
+                                    <input type="tel" class="form-control" value="{{ address_form.phone.value|default:'' }}" name="phone" required>
+                                </div>
+                            </div>
+
+                            <label>Email address *</label>
+                            <input type="email" class="form-control" value="{{ address_form.email.value|default:'' }}" name="email" required>
+
+                            <label>Order notes (optional)</label>
+                            <textarea class="form-control" cols="30" rows="4" name="delivery_instructions" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
+                    </div><!-- End .col-lg-9 -->
+                    <aside class="col-lg-3">
+                        <div class="summary">
+                            <h3 class="summary-title">Your Order</h3>
+
+                            <table class="table table-summary">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                  {% for item in cart %}
+                                  {% with book=item.book %}
+                                    <tr>
+                                        <td><a href="{{book.get_absolute_url}}">{{ book.title }}</a></td>
+                                        <td>${{ cart|get_book_total_price:book.id }}</td>
+                                    </tr>
+                                  {% endwith %}  
+                                  {% endfor %} 
+                                    <tr class="summary-subtotal">
+                                        <td>Subtotal:</td>
+                                        <td>${{ cart.get_subtotal_price }}</td>
+                                    </tr>
+                              
+                                    <tr class="summary-shipping">
+                                      <td>Shipping:</td>
+                                      <td>&nbsp;</td>
+                                    </tr>
+                                    {% for delivery in deliveries %}
+                                    <tr class="summary-shipping-row" data-index="{{delivery.id}}">
+                                      <td>
+                                        <div class="custom-control custom-radio">
+                                          <input type="radio" class="custom-control-input" name="delivery_option" id="{{delivery.id}}" value="{{delivery.id}}">    <!-- Default first delivery option will be selected :   {% if forloop.first %}checked{% endif %}-->
+                                          <label for="{{delivery.id}}" class="custom-control-label">{{ delivery.delivery_name }}</label>
+                                        </div>
+                                      </td>
+                                      <td id="delivery_price">${{ delivery.delivery_price }}</td>
+                                    </tr>
+                                    {% endfor %}
+
+                                    <tr class="summary-total">
+                                        <td>Total:</td>
+                                        <td id="total">${{ cart.get_total_price }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>                   
+
+                            <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+                                <span class="btn-text">Place Order</span>
+                                <span class="btn-hover-text">Proceed to Payment</span>
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    // Function to update delivery price
+    function updateDeliveryPrice() {
+        var selectedDeliveryOption = $('input[type=radio][name=delivery_option]:checked').val();
+
+        $.ajax({
+            type: "POST",
+            url: '{% url "checkout:cart-update-delivery" %}',
+            data: {
+                delivery_option: selectedDeliveryOption,
+                csrfmiddlewaretoken: "{{ csrf_token }}",
+                action: "POST",
+            },
+            success: function (json) {
+                document.getElementById("total").innerHTML = json.total;
+                // Optionally, update other elements as needed
+            },
+            error: function (xhr, errmsg, err) {
+                console.error("Delivery update failed");
+            },
+        });
+    }
+
+    // Attach the change event to update delivery price when the radio button changes
+    $('input[type=radio][name=delivery_option]').on('change', function (e) {
+        e.preventDefault();
+        updateDeliveryPrice();
+    });
+</script>
+{% endblock %} 

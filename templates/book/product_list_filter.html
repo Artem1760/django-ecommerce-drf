@@ -1,0 +1,179 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+
+
+<div class="intro-slide" style="background-image: url(/static/assets/images/demos/demo-2/slider/slide-1.jpg);">
+    <div class="container intro-content">
+        <h3 class="intro-subtitle">The library of joy</h3>
+        <h1 class="intro-title">Find Book <br>That Suits You.</h1>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'book:book-list' %}">Shop</a></li>   
+        </ol>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="toolbox">
+                    <div class="toolbox-left">
+                        <div class="toolbox-info">
+                            Found <span>{{total_books_count}}</span> Book{{books.count|pluralize}} 
+                        </div>
+                    </div>                    
+                </div><!-- End .toolbox -->               
+
+                <!-- Display filtered books -->
+                <div class="products mb-3">
+                    <div class="row justify-content-center">                        
+                        {% if selected_rating %}                            
+                            {% if books %}
+                                <div class="container mb-3"><H5>Filtered by rating <strong>"{{ selected_rating }}"</strong>:</H5></div>
+                            {% else %}   
+                                <div class="container mb-3"><H5>There are no books with rating <strong>"{{ selected_rating }}"</strong>. <a href="{% url 'book:book-list' %}">Look more -> </a></H5></div>                                
+                            {% endif %}
+                        {% elif selected_price %}
+                            {% if books %}
+                                <div class="container mb-3"><H5>Filtered by price range <strong>"{{ selected_price }}"</strong>:</H5></div>
+                            {% else %}   
+                                <div class="container mb-3"><H5>There are no books with price range <strong>"{{ selected_price }}"</strong>. <a href="{% url 'book:book-list' %}">Look more -> </a></H5></div>                                
+                            {% endif %}                           
+                        {% elif selected_author %}
+                            <div class="container mb-3"><H5>Filtered by author <strong>"{{ selected_author }}"</strong>:</H5></div>
+                        {% elif selected_category %}
+                            <div class="container mb-3"><H5>Filtered by category <strong>"{{ selected_category }}"</strong>:</H5></div>
+                        {% elif selected_tag %}
+                            <div class="container mb-3"><H5>Filtered by tag #<strong>{{ selected_tag }}</strong>:</H5></div>
+                        {% else %}
+                            <div class="container mb-3"><H5>All Books:</H5></div>
+                        {% endif %}                         
+                      
+                        <!-- Display books -->
+                        {% for book in books %}
+                            {% include 'book/partials/book_partial.html' %}
+                        {% endfor %}
+                        <!-- Display books -->                                
+                    </div>
+                </div>
+                <!-- End Display filtered books --> 
+
+                <!-- Pagination -->           
+                {% if is_paginated %}
+                    {% include 'book/partials/paginator_partial.html' %}
+                {% endif %}
+                <!-- End Pagination -->
+              
+            </div><!-- End .col-lg-9 -->
+
+            <aside class="col-lg-3 order-lg-first">
+                <div class="sidebar sidebar-shop">
+                    <!-- Tags filter -->
+                    <div class="widget">
+                    <h3 class="widget-title">Browse Tags</h3>
+                        <div class="widget-body">
+                            <div class="widget">
+                                <div class="tagcloud">
+                                    {% for tag in tags.all|slice:":10" %}                                    
+                                    <a href="?tag={{tag.id}}" rel="tag">
+                                        #{{tag.name}} 
+                                    </a>
+                                    {% endfor %}
+                                    <a href="{% url 'book:tag-list' %}" rel="tag">
+                                        <span>--WATCH ALL TAGS--</span> 
+                                    </a>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        <!-- End Tags filter -->
+
+                    <!-- Category filter -->
+                    <div class="widget">
+                    <h3 class="widget-title">Categories</h3>
+                        <div class="widget-body">
+                            <div class="widget widget-cats">                                            
+                                <ul>
+                                    {% for cat in categories|slice:":8" %}  
+                                    {% if cat.category.exists %}                                  
+                                    <li><a href="?category={{cat.id}}">{{cat}}<span>{{cat.get_book_count}}</span></a></li>
+                                    {% endif %}                                    
+                                    {% endfor %}
+                                    <li><a href="{% url 'book:category-list' %}">ALL CATEGORIES</a></li>                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Category filter -->
+
+                    <!-- Author filter -->
+                    <div class="widget">
+                    <h3 class="widget-title">Authors</h3>
+                        <div class="widget-body">
+                            <div class="widget widget-cats">                                            
+                                <ul>
+                                {% for author in authors|slice:":6" %}  
+                                {% if author.author.exists %}                                    
+                                <li><a href="?author={{author.id}}">{{author}}<span>{{author.get_book_count}}</span></a></li>
+                                {% endif %}   
+                                {% endfor %}
+                                <li><a href="{% url 'book:author-list' %}">ALL AUTHORS</a></li>     
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Author filter -->
+
+                    <!-- Price filter -->
+                    <div class="widget">
+                    <h3 class="widget-title">Price</h3>
+                        <div class="widget-body">
+                            <div class="widget widget-cats">                                            
+                                <ul>
+                                    {% for f_price in filter_price %}   
+                                    <li><a href="?filter-price={{ f_price.id }}">{{ f_price.price }}</a></li>
+                                    {% endfor %} 
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Price filter -->
+
+                    <!-- Rating filter -->
+                    <div class="widget">
+                        <h3 class="widget-title">Customer Rating</h3>
+              
+                        {% for rating, count in rating_counts.items %}       
+                        <div class="widget-body">
+                            <div class="widget widget-cats">                                            
+                                <ul>                                                   
+                                    <span class="ratings-container">
+                                        <a href="?rating={{ rating }}">
+                                            <span class="ratings">
+                                                <span class="ratings-val" style="width: {{ rating_widths|get_value:rating }}%;"></span>
+                                            </span>
+                                        </a>
+                                        <span class="ratings-text">( {{ count }} )</span>
+                                    </span>                                              
+                                </ul>     
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!-- End Rating filter -->
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

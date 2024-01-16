@@ -1,0 +1,32 @@
+<div class="reviews">
+    <h3>Add Review</h3>                                            
+    <div class="reviews">    
+        <form action="{% url 'book:add-review' book.slug %}" class="contact-form mb-3" method="POST">
+            {% csrf_token %}                                                 
+        
+            <div class="row">
+                <div class="col-sm-6">
+                    <label for="id_star_rating" class="sr-only">Rating</label>                                           
+                    <div class="select-custom">
+                        <select name="star_rating" id="id_star_rating"  class="form-control" required>
+                            <option value="" disabled selected>Select rate</option>
+                            {% for rate in RATING %}
+                            <option value="{{ rate.0 }}" >
+                            {{ rate.1 }}
+                            </option>   
+                            {% endfor %}                                                     
+                        </select>
+                    </div>                                                      
+                </div>                                        
+            </div>
+        
+            <label for="id_review" class="sr-only">Review</label>
+            <textarea class="form-control" cols="30" rows="4" id="id_review" name="review" required placeholder="Type your review...*" required></textarea>
+            
+            <button type="submit" class="btn btn-outline-primary-2">
+                <span>Add Review</span>
+                <i class="icon-long-arrow-right"></i>
+            </button>
+        </form>  
+    </div>     
+</div>  

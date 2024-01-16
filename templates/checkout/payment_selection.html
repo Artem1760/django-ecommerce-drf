@@ -1,0 +1,136 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+
+<div class="page-header text-center" style="background-image: url('/static/assets/images/page-header-bg.jpg')">
+    <div class="container">
+        <h1 class="page-title">Checkout<span>Shop</span></h1>
+    </div>
+</div>
+<nav aria-label="breadcrumb" class="breadcrumb-nav">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'book:book-list' %}">Shop</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'cart:cart-summary' %}">Cart</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'checkout:checkout' %}">Checkout</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Payment</li>
+      </ol>
+    </div><!-- End .container -->
+</nav>
+
+<div class="page-content">
+    <div class="checkout">
+        <div class="container">    
+            <form method="POST" action="{% url 'checkout:payment-selection' %}">
+                {% csrf_token %}
+                <div class="row">
+
+                    <div class="col-lg-9">
+                        <h2 class="checkout-title">Payment Option</h2>
+                        <div class="row">                            
+                            <div id="paypal-button-container"></div>  
+                        </div>                               
+                    </div>
+                    <aside class="col-lg-3">
+                        <div class="summary">
+                            <h3 class="summary-title">Your Order</h3>
+                            <table class="table table-summary">
+                                <tbody>                                  
+                                    <tr class="summary-subtotal">
+                                        <td>Subtotal:</td>
+                                        <td>${{ cart.get_subtotal_price }}</td>
+                                    </tr>
+                              
+                                    <tr class="summary-shipping">
+                                        <td>Shipping:</td>
+                                        <td>${{ cart.get_delivery_price }}</td>
+                                    </tr>
+                                    
+                                    <tr class="summary-total">
+                                        <td>Total:</td>
+                                        <td>${{ cart.get_total_price }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </aside><!-- End .col-lg-3 -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- End .page-content -->
+<script
+    src="https://www.paypal.com/sdk/js?client-id=AZQiAqo_G8vygoAIT9tAL-Z6MQd49xERaY6a3N0ijCRXkubEyMnylsk1qjxNIFM2iAFomcSTfq4yW47O&currency=GBP"
+    data-sdk-integration-source="button-factory">
+</script>
+{% endblock content %}
+
+{% block script %}
+
+<!-- Include the PayPal JavaScript SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+                        
+<!-- PayPal function -->
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+
+
+    function initPayPalButton() {
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'gold',
+                layout: 'vertical',
+                label: 'paypal',
+
+            },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        "amount": {
+                            "currency_code": "USD",
+                            "value": '{{cart.get_total_price}}'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data) {
+                var url = "{% url 'checkout:payment-complete' %}"
+                return fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({
+                        orderID: data.orderID
+                    })
+                }).then(function () {
+                    location.href = '{% url "checkout:payment-successful" %}';
+                })
+            },
+        }).render('#paypal-button-container');
+    }
+    initPayPalButton();
+</script>
+
+
+{% endblock %}

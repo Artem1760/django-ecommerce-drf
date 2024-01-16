@@ -1,0 +1,61 @@
+ {% extends 'main.html' %}
+ {% block title %} {{title}} {% endblock %}
+ {% block content %}
+ {% load tailwind_filters %}
+
+ 
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-body">
+            <a href="{{request.META.HTTP_REFERER|escape}}">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"><i class="icon-close"></i></span>
+            </button>
+            </a>     
+
+            <div class="form-box">
+                <div class="form-tab">
+                    <ul class="nav nav-pills nav-fill nav-border-anim" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="signin-tab" data-toggle="tab" href="#signin" role="tab" aria-controls="signin" aria-selected="true">Review Update</a>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content" id="tab-content-5">
+                        <div class="tab-pane show active" id="signin" role="tabpanel" aria-labelledby="signin-tab">
+                        
+                            <form action="" class="contact-form mb-3" method="POST">
+                                {% csrf_token %}                                               
+                                        
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label for="id_star_rating" class="sr-only">Rating</label>                                           
+                                        <div class="select-custom">
+                                            <select name="star_rating" id="id_star_rating"  class="form-control">
+                                                {% for rate in RATING %}
+                                                <option value="{{ rate.0 }}" {% if rate.0 == feedback.star_rating %}selected{% endif %}>
+                                                {{ rate.1 }}
+                                                </option>   
+                                                {% endfor %}                                                     
+                                            </select>
+                                        </div>
+                                    </div>                                        
+                                </div>
+                            
+                                <label for="id_review" class="sr-only">Review</label>
+                                <textarea class="form-control" cols="30" rows="4" id="id_review" name="review" required placeholder="Review*">{{ review_form.review.value }}</textarea>
+                            
+                                <button type="submit" name="action" value="update_review" class="btn btn-outline-primary-2">
+                                    <span>Update</span>
+                                    <i class="icon-long-arrow-right"></i>
+                                </button>
+                            </form>                                                
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

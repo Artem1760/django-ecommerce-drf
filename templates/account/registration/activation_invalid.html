@@ -1,0 +1,34 @@
+{% extends 'main.html' %}
+{% block title %}Invalid Activation{ % endblock %}
+{% block content %}
+
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-body">
+            <a href="{% url 'core:index' %}">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"><i class="icon-close"></i></span>
+            </button>
+            </a>
+            <div class="form-box">
+                <div class="form-tab">
+                    <ul class="nav nav-pills nav-fill nav-border-anim" role="tablist">                           
+                        <li class="nav-item">
+                            <a class="nav-link active" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="true">Activation Error</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="tab-content-5">
+                        <div id="register" role="tabpanel" aria-labelledby="register-tab">                            
+                            <div class="mb-3"></div>
+                            <p>Please contact our support team. You can contact us <a href="{% url 'core:contact' %}"><strong>here</strong></a>.</p>                            
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div> 
+
+
+{% endblock content %}

@@ -1,0 +1,89 @@
+{% load custom_filters %}
+
+<div class="container new-arrivals">
+    <div class="heading heading-flex mb-3">
+        <div class="heading-left">
+            <h2 class="title">Recently Viewed</h2>
+        </div>
+    </div>
+    
+    <div class="tab-content tab-content-carousel just-action-icons-sm">
+        <div class="tab-pane p-0 fade show active" id="new-all-tab" role="tabpanel" aria-labelledby="new-all-link">
+            <div class="owl-carousel owl-full carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                data-owl-options='{
+                    "nav": true, 
+                    "dots": true,
+                    "margin": 20,
+                    "loop": false,
+                    "responsive": {
+                        "0": {
+                            "items":2
+                        },
+                        "480": {
+                            "items":2
+                        },
+                        "768": {
+                            "items":3
+                        },
+                        "992": {
+                            "items":4
+                        },
+                        "1200": {
+                            "items":5
+                        }
+                    }
+                }'>
+                {% for b in recently_viewed_books %}
+                <div class="product product-2">
+                    <figure class="product-media">
+                        {% if b.is_sale %}                                                    
+                        <span class="product-label label-circle label-sale">Sale</span>
+                        {% endif %}
+                        <a href="{{b.get_absolute_url}}">
+                            <img src="{{b.cover.url}}" alt="Product image" class="product-image">
+                        </a>
+
+                        <div class="product-action-vertical">
+                            <a href="{% url 'account:user-wishlist' b.id  %}" class="btn-product-icon btn-wishlist" title="Add to wishlist"></a>
+                        </div>
+                       
+                        <form method="POST" class="product-action" action="{% url 'cart:cart-add' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="book_id" value="{{ b.id }}">
+                            <input type="hidden" name="book_qty" value="1">  {# Default quantity is set to 1 #}                                
+                            <button type="submit" value="add_to_cart" class="btn-product btn-cart"><span>Add to Cart</span></button>                            
+                        </form>                                           
+                       
+                    </figure>
+
+                    <div class="product-body">
+                        <div class="product-cat">
+                            <a href="{% url 'book:authors' b.author.slug %}">{{b.author}}</a>
+                        </div><!-- End .product-cat -->
+                        <h3 class="product-title"><a href="{{b.get_absolute_url}}">{{b.title}}</a></h3>
+                        <div class="product-price">
+                            {% if not b.is_sale %}
+                            ${{b.regular_price}}
+                            {% else %}
+                            <!-- End if no sale price -->
+                            <span class="new-price">${{b.discount_price}}</span>
+                            <span class="old-price">${{b.regular_price}}</span>
+                            {% endif %}
+                        </div><!-- End .product-price -->
+                        
+                        <div class="ratings-container">
+                            <div class="ratings">
+                                <div class="ratings-val" style="width: {{b.average_star_rating|book_rating_percentage}}%;"></div><!-- End .ratings-val -->                                                           
+                                {{ b.average_star_rating|floatformat:1 }}
+                            </div><!-- End .ratings -->                                                 
+                        </div>
+                        <div class="ratings-container">
+                            <a href="{{b.get_absolute_url}}" class="ratings-text"> ( {{b.reviews.count}} Reviews)</a>                                                      
+                        </div>                        
+                    </div>
+                </div>
+                {% endfor %} 
+            </div>
+        </div> 
+    </div>
+</div>   
