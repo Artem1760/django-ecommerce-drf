@@ -1,5 +1,5 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, reverse_lazy
 
 from . import views
 
@@ -17,21 +17,22 @@ urlpatterns = [
     path('activate/<slug:uidb64>/<slug:token>/',
          views.AccountActivateView.as_view(), name='activate'),
 
-    # Reset password    
+    # Reset password
     path('password-reset/', auth_views.PasswordResetView.as_view(
         template_name='account/password_reset/password_reset_form.html',
+        success_url=reverse_lazy('account:password-reset-done'),
         email_template_name='account/password_reset/password_reset_email.html'),
          name='password-reset'),
-    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
+    path('password-reset-done/', auth_views.PasswordResetDoneView.as_view(
         template_name='account/password_reset/password_reset_done.html'),
          name='password-reset-done'),
     path('password-reset-confirm/<uidb64>/<token>/',
          auth_views.PasswordResetConfirmView.as_view(
-             template_name='account/password_reset/password_reset_confirm.html'),
+             template_name='account/password_reset/password_reset_confirm.html',
+             success_url=reverse_lazy('account:password-reset-complete')),
          name='password-reset-confirm'),
-    path('password-reset-complete/',
-         auth_views.PasswordResetCompleteView.as_view(
-             template_name='account/password_reset/password_reset_complete.html'),
+    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='account/password_reset/password_reset_complete.html'),
          name='password-reset-complete'),
 
     # User dashboard 

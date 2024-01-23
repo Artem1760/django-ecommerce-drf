@@ -83,7 +83,7 @@ class AccountActivateView(View):
             user.is_active = True
             user.save()
             login(request, user)
-            return redirect('account:dashboard')
+            return redirect('account:login')
 
         return render(request, self.template_name)
 

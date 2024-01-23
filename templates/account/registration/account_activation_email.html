@@ -1,40 +1,13 @@
 
-{% extends 'main.html' %}
-
-{% block title %}Account Activation{% endblock title %}
-{% block content %}
-
-
-<div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-        <div class="modal-body">
-            <a href="{% url 'core:index' %}">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true"><i class="icon-close"></i></span>
-            </button>
-            </a>
-            <div class="form-box">
-                <div class="form-tab">
-                    <ul class="nav nav-pills nav-fill nav-border-anim" role="tablist">                           
-                        <li class="nav-item">
-                            <a class="nav-link active" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="true">Account Activation</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="tab-content-5">
-                        <div id="register" role="tabpanel" aria-labelledby="register-tab">                            
-                            <div class="mb-3"></div>
-                            {% autoescape off %}
-                                <p>Hi {{ user.username }},                                
-                                    Your account has successfully created. Please click below link to activate your account:                                    
-                                    http://{{ domain }}{% url 'account:activate' uidb64=uid token=token %}
-                                </p> 
-                            {% endautoescape %}                                                           
-                        </div> 
-                    </div> 
-                </div> 
-            </div> 
-        </div> 
-    </div> 
-</div> 
-
-{% endblock content %}
+{% autoescape off %}
+<p>Hi {{ user.username }},</p>
+<p>
+    Your account has been successfully created. Please click the link
+    below to activate your account:
+</p>
+<p>
+    <a href="http://{{ domain }}{% url 'account:activate' uidb64=uid token=token %}">
+    Activate Account
+    </a>
+</p>
+{% endautoescape %}

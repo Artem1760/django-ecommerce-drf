@@ -1,6 +1,3 @@
-# django-ecommerce-drf
-Django E-Commerce Project with DRF APIs
-
 # Book Store Project
 
 Welcome to the Book Store Project! This Django-based project serves as an online book store, providing a seamless experience for both administrators and users. The project is organized into several Django apps, each catering to specific functionalities:

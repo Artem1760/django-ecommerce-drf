@@ -30,7 +30,7 @@
                             <!-- REGISTER -->
                             <div class="tab-pane fade show active" id="register" role="tabpanel" aria-labelledby="register-tab">
                                
-                                <form action="" method="POST">
+                                <form method="POST">
                                     {% csrf_token %}
                                     {{ form|crispy }}
                                     

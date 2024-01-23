@@ -138,9 +138,11 @@ CRISPY_TEMPLATE_PACK = 'tailwind'
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'tailwind'
 
 # Email settings
-EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
+
 EMAIL_HOST = env.list('EMAIL_HOST')
-EMAIL_PORT = env('EMAIL_PORT', cast=bool)
+EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
@@ -151,11 +153,11 @@ CART_SESSION_ID = 'cart'
 
 # JAZZMIN
 JAZZMIN_SETTINGS = {
-    'site_title': _('MyShop'),
-    'site_header': _('MyShop Administration'),
-    'site_brand': _('MyShop'),
+    'site_title': _('Molla'),
+    'site_header': _('Molla Administration'),
+    'site_brand': _('Molla'),
     'site_logo': 'assets/images/logo.png',
-    'welcome_sign': _('Welcome to MyShop Administration'),
+    'welcome_sign': _('Welcome to Molla Administration'),
     'site_copyrights': 'my-shop.com',
     'search_model': ['auth.User', 'auth.Group'],
     'topmenu_links': [
@@ -272,6 +274,6 @@ CORS_ALLOWED_ORIGINS = []
 
 if DEBUG:
     CORS_ALLOWED_ORIGINS += [
-        'http://localhost:8000',  # we should not allow http only https
+        'http://localhost:8000',
         'https://localhost:8000'
     ]
