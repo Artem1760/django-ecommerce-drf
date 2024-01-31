@@ -35,15 +35,14 @@ INSTALLED_APPS = [
     # Third party packages    
     'crispy_forms',
     'crispy_tailwind',
-    'taggit',  # used for tags
-    'ckeditor',
-    # text editor allows users to write content directly inside admin page.
+    'taggit',      # used for tags
+    'ckeditor',    # text editor allows users to write content directly inside admin page.
 
     # Third party API packages  
     'algoliasearch_django',
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',  # make my API available for other domains 
+    'corsheaders',
     'djoser',  # drf token auth
 
 ]
@@ -82,33 +81,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecom_prj.wsgi.application'
 
+#  PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'PORT': env('DB_PORT'),
+        'HOST': env('DB_HOST'),
     }
 }
 
-#  PostgreSQL
-# DATABASES = {
-#     'default': {
-#         'ENGINE': env.db('DB_ENGINE'),
-#         'NAME': env.db('DB_NAME'),
-#         'USER': env.db('DB_USER'),
-#         'PASSWORD': env.db('DB_PASSWORD'),
-#         'PORT': env.db('DB_PORT'),
-#         'HOST': env.list('DB_HOST'),
-#     }
-# }
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 LANGUAGE_CODE = 'en-us'

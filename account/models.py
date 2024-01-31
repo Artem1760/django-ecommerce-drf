@@ -68,7 +68,7 @@ class CustomerUserManager(BaseUserManager):
 
 class CustomerUser(AbstractBaseUser, PermissionsMixin):
     id = ShortUUIDField(primary_key=True, unique=True, length=10,
-                        max_length=12, editable=False, alphabet='1234567890')
+                        editable=False, alphabet='1234567890')
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
@@ -103,7 +103,7 @@ class CustomerUser(AbstractBaseUser, PermissionsMixin):
 
 class CustomerProfile(models.Model):
     id = ShortUUIDField(primary_key=True, unique=True, length=10,
-                        max_length=12, editable=False, alphabet='1234567890')
+                        editable=False, alphabet='1234567890')
     user = models.OneToOneField('CustomerUser', on_delete=models.CASCADE,
                                 related_name='profile')
     email = models.EmailField(_('email address'), unique=True)

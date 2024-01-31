@@ -22,65 +22,43 @@ The Book Store Project now incorporates Django Rest Framework (DRF) to provide a
 
 - **Search with Django Algolia**: Django Algolia implements efficient and fast search functionality. Users can easily search for specific book, author, publisher or other relevant information, enhancing the overall user experience.
 
-## Installation
+### Installation
 
 To get started with this project, follow these steps:
 
-### 1. Clone the Repository
+1. Clone the Repository
+    Clone the repository to your local machine:
+        ```bash
+        git clone https://github.com/Artem1760/django-ecommerce-drf.git
+        ```
+2. Navigate to the project directory: `cd <project-directory>`
+3. Create a virtual environment:
+    ```bash
+    python -m venv venv
+    ```
+4. Activate the virtual environment:
+    - On Windows:
+        ```bash
+        source venv/Scripts/activate
+        ```
+    - On macOS/Linux:
+        ```bash
+        source venv/bin/activate
+        ```
+5. Install dependencies: `pip install -r requirements.txt`
+6. Activate the provided PostgreSQL database:
+    - Use password for db from .env file:    
+    ```bash
+    pg_restore --dbname=book_store --username=djcrmuser --password=your_password ./book_store_db.sql
+    ```  
+7. Set environment variables in the `.env` file (see below)
+8. Apply migrations: `python manage.py migrate`
+9. Run the development server: `python manage.py runserver`
+10. Create a superuser to access the admin panel: `python manage.py createsuperuser`
 
-Clone the repository to your local machine:
+### Environment Variables (.env)
+Replace environment variables in the `.env` file in the project root with your preferred values.
 
-```bash
-git clone https://github.com/Artem1760/django-ecommerce-drf.git
-```
-
-### 2. Setup Virtual Environment
-
-Navigate to the project directory and create a virtual environment:
-
-```bash
-cd django-ecommerce-drf
-python -m venv venv
-```
-
-Activate the virtual environment:
-
-```bash
-# On Windows:
-venv\Scripts\activate
-
-# On Unix or MacOS:
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
-
-Install project dependencies from the requirements.txt file:
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Create Superuser
-
-Create a superuser to access the admin panel:
-
-```bash
-python manage.py createsuperuser
-```
-
-Follow the prompts to enter the superuser credentials.
-
-### 5. Run the Project
-
-Now, you can run the project:
-
-```bash
-# Example command to run the project
-python manage.py runserver
-```
-
-Visit [http://localhost:8000/](http://localhost:8000/) in your web browser to see the project in action.`
 
 
 ## Usage

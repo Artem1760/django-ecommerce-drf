@@ -194,15 +194,11 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ['id', 'get_book_url', 'title', 'slug', 'isbn',
-                  'publication_date',
-                  'regular_price', 'discount_price', 'is_sale',
-                  'sale_percentage',
-                  'cover', 'average_star_rating', 'description',
-                  'specification',
-                  'quantity', 'created_date', 'is_active', 'num_pages',
-                  'category',
-                  'author', 'book_type', 'publisher', 'languages',
-                  'filter_price']
+                  'publication_date', 'regular_price', 'discount_price', 
+                  'is_sale', 'sale_percentage', 'cover', 'average_star_rating', 
+                  'description', 'specification', 'quantity', 'created_date', 
+                  'is_active', 'num_pages', 'category', 'author', 'book_type', 
+                  'publisher', 'languages', 'filter_price']
 
     def get_sale_percentage(self, obj):
         return obj.get_percentage()

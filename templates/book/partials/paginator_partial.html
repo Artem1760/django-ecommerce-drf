@@ -3,10 +3,7 @@
         {% if books.has_previous %}
            
             <li class="page-item">
-                <a class="page-link page-link-prev" href="?
-                {% if search %}q={{ request.GET.q }}&{% endif %}
-                {% for key, value in selected_filter.items %}{% if value %}{{ key }}={{ value }}&{% endif %}{% endfor %}
-                {% if books.sortby_param %}sortby={{ books.sortby_param }}&{% endif %}page=1" aria-label="First">
+                <a class="page-link page-link-prev" href="?{% if search %}q={{ request.GET.q }}&{% endif %}{% for key, value in selected_filter.items %}{% if value %}{{ key }}={{ value }}&{% endif %}{% endfor %}{% if books.sortby_param %}sortby={{ books.sortby_param }}&{% endif %}page=1" aria-label="First">
                     <span aria-hidden="true"></span>First
                 </a>
             </li>

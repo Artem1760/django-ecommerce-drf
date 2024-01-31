@@ -1,3 +1,4 @@
+import uuid
 from ckeditor.fields import RichTextField
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -29,7 +30,7 @@ FILTER_PRICE = (
 
 
 class Category(models.Model):
-    name = models.CharField(unique=True, max_length=100, db_index=True)
+    name = models.CharField(unique=True, max_length=200, db_index=True)
     slug = models.SlugField(max_length=200)
     is_active = models.BooleanField(default=True)
 
@@ -66,19 +67,16 @@ class BookType(models.Model):
 
 
 class Book(models.Model):
-    id = ShortUUIDField(primary_key=True, unique=True, length=10,
-                        max_length=12, editable=False, alphabet='1234567890')
-    title = models.CharField(max_length=200, db_index=True,
-                             unique=True)  # db_index=True is for better searching
-    slug = models.SlugField()
+    title = models.CharField(max_length=255, db_index=True, unique=True)
+    slug = models.SlugField(max_length=255)
     publication_date = models.DateField()
-    isbn = ShortUUIDField(unique=True, length=13, max_length=25, prefix='isbn',
+    isbn = ShortUUIDField(unique=True, length=11, prefix='isbn',
                           editable=False, alphabet='1234567890')
     regular_price = models.DecimalField(verbose_name=_('Regular price'),
-                                        max_digits=10, decimal_places=2,
+                                        max_digits=12, decimal_places=2,
                                         default=10)
     discount_price = models.DecimalField(verbose_name=_('Discount price'),
-                                         max_digits=10, decimal_places=2,
+                                         max_digits=12, decimal_places=2,
                                          default=0, null=True, blank=True)
     is_sale = models.BooleanField(default=False)
     cover = models.ImageField(upload_to='book_covers',
@@ -88,7 +86,7 @@ class Book(models.Model):
                                 default='This is the book', db_index=True)
     specification = RichTextField(null=True, blank=True,
                                   default='Book Specification')
-    quantity = models.IntegerField(default='25', null=True, blank=True)
+    quantity = models.IntegerField(default=25, null=True, blank=True)
     created_date = models.DateField(auto_now_add=True, editable=False)
     is_active = models.BooleanField(default=True)
     num_pages = models.PositiveIntegerField(null=True, blank=True)
@@ -96,7 +94,6 @@ class Book(models.Model):
     users_wishlist = models.ManyToManyField(CustomerUser,
                                             related_name='users_wishlist',
                                             blank=True)
-
     category = models.ForeignKey('Category', on_delete=models.SET_NULL,
                                  related_name='category', null=True)
     author = models.ForeignKey('Author', on_delete=models.CASCADE,
@@ -155,27 +152,32 @@ class Book(models.Model):
         """Prices checks"""
         # Call the parent clean method to ensure all default validations are performed
         super().clean()
-
-        # Check if discount_price is not None and is_sale is False
-        if self.discount_price is not None and not self.is_sale:
+                
+        # Check if discount_price is zero or None and is_sale is True
+        if (self.discount_price is None or self.discount_price == 0) and self.is_sale:
             raise ValidationError({
-                'is_sale': 'If discount_price is not None, is_sale must be True.'})
+                'is_sale': 'If discount_price is zero or None, is_sale must be False.'
+            })
 
-        # Check if is_sale is True and discount_price is None
-        if self.is_sale and self.discount_price is None:
+        # Check if is_sale is True and discount_price is zero or None
+        if self.is_sale and (self.discount_price is None or self.discount_price == 0):
             raise ValidationError({
-                'discount_price': 'If is_sale is True, discount_price cannot be None.'})
+                'discount_price': 'If is_sale is True, discount_price cannot be zero or None.'
+            })
 
         # Check if discount_price is lower than regular_price
-        if self.discount_price is not None and self.discount_price >= self.regular_price:
+        if self.discount_price is not None and \
+           self.regular_price is not None and \
+           self.discount_price >= self.regular_price:
             raise ValidationError({
-                'discount_price': 'Discount price must be lower than regular price.'})
-
+                'discount_price': 'Discount price must be lower than regular price.'
+            })
+            
     def save(self, *args, **kwargs):
         # Update the slug field based on the name field
         self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-
+             
 
 class BookImage(models.Model):
     """
@@ -211,7 +213,7 @@ class BookLanguage(models.Model):
 
 
 class Publisher(models.Model):
-    name = models.CharField(max_length=200, db_index=True, unique=True)
+    name = models.CharField(max_length=255, db_index=True, unique=True)
 
     class Meta:
         verbose_name = _('Publisher')
@@ -223,8 +225,8 @@ class Publisher(models.Model):
 
 
 class Author(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=150)
+    name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255)
 
     class Meta:
         verbose_name = _('Author')

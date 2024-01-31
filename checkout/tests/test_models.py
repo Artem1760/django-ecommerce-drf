@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from decimal import Decimal
-from ..models import DeliveryOptions, Order, OrderItem, Address
+from checkout.models import DeliveryOptions, Order, OrderItem, Address
 from book.models import Book, BookLanguage, BookType, Category, Publisher, \
     Author
 
@@ -31,7 +31,7 @@ class BaseTest(TestCase):
             title='Test Book',
             slug='test-book',
             publication_date='2022-01-01',
-            isbn=f'test-isbn-test-book',
+            isbn=f'test-isbn-book',
             regular_price=Decimal('15.00'),
             is_sale=False,
             description=f'Test description for Test Book',
@@ -62,7 +62,7 @@ class OrderModelTest(BaseTest):
     def test_order_str(self):
         order = Order.objects.create(
             user=self.user,
-            oid='1234567890',
+            oid='oid1234567890',
             total_price=Decimal('30.00'),
             delivery=self.delivery_option,
             transaction_id='abc123',
@@ -78,7 +78,7 @@ class OrderModelTest(BaseTest):
 
         order = Order.objects.create(
             user=self.user,
-            oid='1234567890',
+            oid='oid1234567899',
             total_price=Decimal('30.00'),
             delivery=self.delivery_option,
             transaction_id='abc123',
@@ -114,7 +114,7 @@ class OrderModelTest(BaseTest):
         )
         order = Order.objects.create(
             user=self.user,
-            oid='1234567890',
+            oid='oid1234567896',
             total_price=Decimal('30.00'),
             delivery=self.delivery_option,
             transaction_id='abc123',
@@ -135,7 +135,7 @@ class OrderItemModelTest(BaseTest):
 
         order = Order.objects.create(
             user=self.user,
-            oid='1234567899',
+            oid='oid1234567899',
             total_price=Decimal('30.00'),
             delivery=self.delivery_option,
             transaction_id='abc123',

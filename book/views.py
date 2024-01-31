@@ -1,8 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models.functions import Coalesce 
 from django.db.models import Avg, Func, IntegerField, Count, Q, Case, When, F, \
-    ExpressionWrapper, DecimalField
+    ExpressionWrapper, DecimalField, FloatField 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from taggit.models import Tag
@@ -43,8 +44,11 @@ def sort_books(request, book_qs):
             return book_qs.annotate(num_reviews=Count('reviews')).order_by(
                 '-num_reviews')
         case 'most-rated':
+            # Annotate each book with the average rating, using Coalesce to handle cases with no reviews
+            # Set the output_field explicitly to FloatField to avoid mixed types in the expression
             return book_qs.annotate(
-                avg_rating=Avg('reviews__star_rating')).order_by('-avg_rating')
+                avg_rating=Coalesce(Avg('reviews__star_rating'), 0, output_field=FloatField())
+                ).order_by('-avg_rating')
         case 'price-LH':
             return book_qs.annotate(
                 sorted_price=Case(

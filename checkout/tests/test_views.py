@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from ..models import DeliveryOptions, Order
+from ..models import DeliveryOptions 
 
 
 class CheckoutViewTests(TestCase):

@@ -23,7 +23,7 @@ class BaseModelTest(TestCase):
             title=title,
             slug='test-book',
             publication_date='2022-01-01',
-            isbn='test-isbn-test-book',
+            isbn='test-isbn-book',
             regular_price=20.00,
             is_sale=is_sale,
             description='Test description for Test Book',

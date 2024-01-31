@@ -45,7 +45,7 @@ class Order(models.Model):
     user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE,
                              related_name='order_user')
     oid = ShortUUIDField(verbose_name=_('Order ID'), unique=True, length=10,
-                         max_length=25, prefix='oid')
+                         prefix='oid')
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     delivery = models.ForeignKey('DeliveryOptions', on_delete=models.SET_NULL,
                                  null=True, verbose_name='delivery_options')

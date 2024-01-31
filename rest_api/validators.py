@@ -52,7 +52,7 @@ def validate_discount_price(data):
             discount_price >= regular_price:
         raise serializers.ValidationError({
             'discount_price': [
-                "Discount price must be lower than the regular price."]
+                'Discount price must be lower than the regular price.']
         })
     return discount_price
 

@@ -36,7 +36,7 @@ class WorkDays(models.Model):
 class ContactUs(models.Model):
     """Data for collecting queries from customers"""
     id = ShortUUIDField(primary_key=True, unique=True, length=10,
-                        max_length=12, editable=False, alphabet='1234567890')
+                        editable=False, alphabet='1234567890')
     user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE, null=True,
                              blank=True)
     name = models.CharField(max_length=160)

@@ -31,7 +31,7 @@ class CartTestCase(TestCase):
             title='Test Book',
             slug='test-book',
             publication_date='2022-01-01',
-            isbn='test-isbn-test-book',
+            isbn='test-isbn-book',
             regular_price=50.00,
             discount_price=40.00,
             is_sale=True,
